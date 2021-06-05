@@ -1,16 +1,16 @@
 resource "azurerm_storage_account" "sa" {
-  name                     = "sa-${local.das_func_name}"
-  resource_group_name      = azurerm_resource_group.rg.name
-  location                 = azurerm_resource_group.rg.location
+  name                     = "sa-${var.func_name}"
+  resource_group_name      = var.resource_group_name
+  location                 = var.resource_group_location
   account_kind             = "StorageV2"
   account_tier             = "Standard"
   account_replication_type = "LRS"
 }
 
 resource "azurerm_app_service_plan" "asp" {
-  name                = "asp-${local.das_func_name}"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
+  name                = "asp-${var.func_name}"
+  location            = var.resource_group_location
+  resource_group_name = var.resource_group_name
   kind                = "functionapp"
   reserved = true
   sku {
@@ -20,16 +20,16 @@ resource "azurerm_app_service_plan" "asp" {
 }
 
 resource "azurerm_application_insights" "app" {
-  name                = "${local.das_func_name}-insights"
-  location            = "${azurerm_resource_group.rg.location}"
-  resource_group_name = "${azurerm_resource_group.rg.name}"
+  name                = "${var.func_name}-insights"
+  location            = "${var.resource_group_location}"
+  resource_group_name = "${var.resource_group_name}"
   application_type    = "other"
 }
 
 resource "azurerm_function_app" "func" {
-  name                       = "${local.das_func_name}"
-  location                   = azurerm_resource_group.rg.location
-  resource_group_name        = azurerm_resource_group.rg.name
+  name                       = "${var.func_name}"
+  location                   = var.resource_group_location
+  resource_group_name        = var.resource_group_name
   app_service_plan_id        = azurerm_app_service_plan.asp.id
   storage_account_name       = azurerm_storage_account.sa.name
   storage_account_access_key = azurerm_storage_account.sa.primary_access_key
@@ -37,20 +37,9 @@ resource "azurerm_function_app" "func" {
   os_type = "linux"
   https_only = true
 
-  app_settings = {
-    "FUNCTIONS_WORKER_RUNTIME" = "python"
-    "APPINSIGHTS_INSTRUMENTATIONKEY" = "${azurerm_application_insights.app.instrumentation_key}"
-    "COSMOSDB_ENDPOINT"        = azurerm_cosmosdb_account.cosmos.endpoint
-    "COSMOSDB_KEY"             = azurerm_cosmosdb_account.cosmos.primary_key
-    "COSMOSDB_NAME"            = "${local.das_func_name}-db"
-    "COSMOSDB_CONTAINER"       = "${local.das_func_name}-dbcontainer"
-  }
+  app_settings = var.app_settings
 
-  site_config {
-    use_32_bit_worker_process   = false
-    linux_fx_version = "Python|3.8"        
-    ftps_state = "Disabled"
-  }
+  site_config = var.site_config
   
   
 }

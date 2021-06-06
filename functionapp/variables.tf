@@ -1,20 +1,20 @@
 variable "func_name" {
-    type = "string"
+    type = string
 }
 
 variable "resource_group_name" {
-  type = "string"
+  type = string
 }
 
 variable "resource_group_location" {
-  type = "string"
+  type = string
 }
 
 variable "app_settings" {
-  type = "map"
+  type = map
 }
 
 
 variable "site_config" {
-  type = "map"
+  type = map
 }

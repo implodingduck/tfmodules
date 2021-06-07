@@ -28,3 +28,7 @@ variable "linux_fx_version" {
   type = string
   default = "Python|3.8"
 }
+
+variable "working_dir" {
+  type = string
+}

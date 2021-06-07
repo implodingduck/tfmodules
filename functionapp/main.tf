@@ -56,7 +56,7 @@ resource "null_resource" "publish_func"{
     index = "${timestamp()}"
   }
   provisioner "local-exec" {
-    working_dir = "DetermineActiveSite"
+    working_dir = var.working_dir
     command     = "func azure functionapp publish ${azurerm_function_app.func.name}"
   }
 }

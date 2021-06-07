@@ -39,7 +39,14 @@ resource "azurerm_function_app" "func" {
 
   app_settings = merge({"APPINSIGHTS_INSTRUMENTATIONKEY" = "${azurerm_application_insights.app.instrumentation_key}"}, var.app_settings)
 
-  site_config = var.site_config
+  site_config {
+    dynamic "site_config"{
+      for_each = var.site_config
+      content {
+        site_config.key = site_config.value
+      }
+    } 
+  }
   
   
 }

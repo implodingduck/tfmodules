@@ -37,7 +37,7 @@ resource "azurerm_function_app" "func" {
   os_type = "linux"
   https_only = true
 
-  app_settings = var.app_settings
+  app_settings = merge({"APPINSIGHTS_INSTRUMENTATIONKEY" = "${azurerm_application_insights.app.instrumentation_key}"}, var.app_settings)
 
   site_config = var.site_config
   

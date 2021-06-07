@@ -14,7 +14,17 @@ variable "app_settings" {
   type = map
 }
 
+variable "use_32_bit_worker_process" {
+  type = bool
+  default = false
+}
 
-variable "site_config" {
-  type = map
+variable "ftps_state" {
+  type = string
+  default = "Disabled"
+}
+
+variable "linux_fx_version" {
+  type = string
+  default = "Python|3.8"
 }

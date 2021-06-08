@@ -56,7 +56,7 @@ resource "azurerm_key_vault" "kv" {
 }
 
 resource "azurerm_key_vault_secret" "container" {
-  name         = "container"
+  name         = "container-name"
   value        = azurerm_storage_container.state.name
   key_vault_id = azurerm_key_vault.kv.id
 }

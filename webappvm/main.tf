@@ -28,7 +28,7 @@ resource "azurerm_storage_account" "sa" {
 }
 
 resource "azurerm_virtual_network" "default" {
-  name                = "${var.cluster_name}-vnet-${local.loc_for_naming}"
+  name                = "${var.name}-vnet-${local.loc_for_naming}"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   address_space       = [var.vnet_cidr]

@@ -10,6 +10,7 @@ resource "random_string" "unique" {
 
 resource "azurerm_resource_group" "rg" {
     name = "rg-webapp-${var.name}-${local.loc_for_naming}"
+    location = var.location
 }
 
 resource "azurerm_storage_account" "sa" {
@@ -103,26 +104,15 @@ resource "azurerm_key_vault" "kv" {
   }
 }
 
-resource "azurerm_key_vault_key" "generated" {
-  name         = "generated-certificate"
-  key_vault_id = azurerm_key_vault.kv.id
-  key_type     = "RSA"
-  key_size     = 4096
-
-  key_opts = [
-    "decrypt",
-    "encrypt",
-    "sign",
-    "unwrapKey",
-    "verify",
-    "wrapKey",
-  ]
-}
-
 resource "tls_private_key" "example_ssh" {
   algorithm = "RSA"
   rsa_bits = 4096
 }
+output "tls_private_key" { 
+    value = tls_private_key.example_ssh.private_key_pem 
+    sensitive = true
+}
+
 
 resource "azurerm_linux_virtual_machine" "vm" {
     count                 = var.num_vms
@@ -151,7 +141,7 @@ resource "azurerm_linux_virtual_machine" "vm" {
 
     admin_ssh_key {
         username       = "azureuser"
-        public_key     = file("~/.ssh/id_rsa.pub")
+        public_key     = tls_private_key.example_ssh.public_key_openssh 
     }
 
     boot_diagnostics {

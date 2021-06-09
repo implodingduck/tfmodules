@@ -107,7 +107,7 @@ resource "azurerm_linux_virtual_machine" "vm" {
     size                  = "Standard_DS1_v2"
 
     os_disk {
-        name              = "myOsDisk"
+        name              = "${var.name}vm${count.index}osdesk"
         caching           = "ReadWrite"
         storage_account_type = "Premium_LRS"
     }

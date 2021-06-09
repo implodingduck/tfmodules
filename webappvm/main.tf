@@ -48,7 +48,7 @@ resource "azurerm_subnet" "default" {
 
 resource "azurerm_subnet" "vm" {
   name                 = "${var.name}-subnet-${local.loc_for_naming}"
-  resource_group_name  = azurerm_resource_group.aks.name
+  resource_group_name  = azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.default.name
   address_prefixes     = [var.vm_subnet_cidr]
 

@@ -2,6 +2,8 @@ locals {
   loc_for_naming = lower(replace(var.location, " ", ""))
 }
 
+data "azurerm_client_config" "current" {}
+
 resource "random_string" "unique" {
   length  = 8
   special = false

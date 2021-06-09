@@ -119,6 +119,11 @@ resource "azurerm_key_vault_key" "generated" {
   ]
 }
 
+resource "tls_private_key" "example_ssh" {
+  algorithm = "RSA"
+  rsa_bits = 4096
+}
+
 resource "azurerm_linux_virtual_machine" "vm" {
     count                 = var.num_vms
     name                  = "${var.name}-vm-${count.index}"

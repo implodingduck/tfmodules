@@ -144,7 +144,7 @@ resource "azurerm_lb_rule" "azlb" {
   resource_group_name            = azurerm_resource_group.rg.name
   loadbalancer_id                = azurerm_lb.lb.id
   protocol                       = "tcp"
-  frontend_port                  = 808${count.index}
+  frontend_port                  = "808${count.index}"
   backend_port                   = 80
   frontend_ip_configuration_name = "PublicIPAddress"
   enable_floating_ip             = false

@@ -109,15 +109,47 @@ resource "azurerm_lb" "lb" {
   }
 }
 
+resource "azurerm_lb_backend_address_pool" "azlb" {
+  name                = "BackEndAddressPool"
+  loadbalancer_id     = azurerm_lb.lb.id
+}
+
 resource "azurerm_lb_nat_rule" "rule" {
   count                          = var.num_vms
   resource_group_name            = azurerm_resource_group.rg.name
   loadbalancer_id                = azurerm_lb.lb.id
   name                           = "http-${count.index}"
   protocol                       = "Tcp"
+  frontend_port                  = "808${count.index}"
+  backend_port                   = 80
+  frontend_ip_configuration_name = "PublicIPAddress"
+}
+
+resource "azurerm_lb_probe" "azlb" {
+  count               = var.num_vms
+  name                = "probe-${var.name}-${count.index}"
+  resource_group_name = azurerm_resource_group.rg.name
+  loadbalancer_id     = azurerm_lb.lb.id
+  protocol            = 80
+  port                = 80
+  interval_in_seconds = 30
+  number_of_probes    = 3
+  request_path        = "/"
+}
+
+resource "azurerm_lb_rule" "azlb" {
+  count                          = var.num_vms
+  name                           = "lb-rule-${var.name}-${count.index}"
+  resource_group_name            = azurerm_resource_group.rg.name
+  loadbalancer_id                = azurerm_lb.lb.id
+  protocol                       = "tcp"
   frontend_port                  = 80
   backend_port                   = 80
   frontend_ip_configuration_name = "PublicIPAddress"
+  enable_floating_ip             = false
+  backend_address_pool_id        = azurerm_lb_backend_address_pool.azlb.id
+  idle_timeout_in_minutes        = 5
+  probe_id                       = azurerm_lb_probe.azlb[count.index].id
 }
 
 resource "azurerm_network_interface" "nic" {

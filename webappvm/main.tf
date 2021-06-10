@@ -111,6 +111,7 @@ resource "azurerm_lb" "lb" {
 
 resource "azurerm_lb_backend_address_pool" "azlb" {
   name                = "BackEndAddressPool"
+  resource_group_name = azurerm_resource_group.rg.name
   loadbalancer_id     = azurerm_lb.lb.id
 }
 
@@ -143,7 +144,7 @@ resource "azurerm_lb_rule" "azlb" {
   resource_group_name            = azurerm_resource_group.rg.name
   loadbalancer_id                = azurerm_lb.lb.id
   protocol                       = "tcp"
-  frontend_port                  = 80
+  frontend_port                  = 808${count.index}
   backend_port                   = 80
   frontend_ip_configuration_name = "PublicIPAddress"
   enable_floating_ip             = false
@@ -159,16 +160,17 @@ resource "azurerm_network_interface" "nic" {
   resource_group_name = azurerm_resource_group.rg.name
 
   ip_configuration {
-    name                          = "myipconfig"
+    name                          = "myipconfig${count.index}"
     subnet_id                     = azurerm_subnet.vm.id
     private_ip_address_allocation = "Dynamic"
+    load_balancer_backend_address_pools_ids = [azurerm_lb_backend_address_pool.azlb.id]
   }
 }
 
 resource "azurerm_network_interface_nat_rule_association" "assoc" {
   count = var.num_vms
   network_interface_id  = azurerm_network_interface.nic[count.index].id
-  ip_configuration_name = "myipconfig"
+  ip_configuration_name = "myipconfig${count.index}"
   nat_rule_id           = azurerm_lb_nat_rule.rule[count.index].id
 }
 
@@ -176,7 +178,7 @@ resource "azurerm_availability_set" "set" {
   name                = "aset-${var.name}"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-
+  managed             = true
   tags = {
         managed_by = "terraform"
     }

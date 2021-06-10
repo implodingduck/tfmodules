@@ -94,7 +94,7 @@ resource "azurerm_key_vault" "kv" {
 }
 
 data "template_file" "nginx-vm-cloud-init" {
-  template = file("install-nginx.sh")
+  template = file("${path.module}/install-nginx.sh")
 }
 
 resource "random_password" "password" {

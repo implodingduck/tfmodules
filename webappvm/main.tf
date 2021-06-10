@@ -93,9 +93,20 @@ resource "azurerm_key_vault" "kv" {
   }
 }
 
-resource "tls_private_key" "example_ssh" {
-  algorithm = "RSA"
-  rsa_bits = 4096
+data "template_file" "nginx-vm-cloud-init" {
+  template = file("install-nginx.sh")
+}
+
+resource "random_password" "password" {
+  length           = 16
+  special          = true
+  override_special = "_%@"
+}
+
+resource "azurerm_key_vault_secret" "vmpassword" {
+  name         = "vmpassword"
+  value        = random_password.password.result
+  key_vault_id = azurerm_key_vault.kv.id
 }
 
 resource "azurerm_linux_virtual_machine" "vm" {
@@ -121,12 +132,13 @@ resource "azurerm_linux_virtual_machine" "vm" {
 
     computer_name  = "${var.name}-vm-${count.index}"
     admin_username = "azureuser"
-    disable_password_authentication = true
-
-    admin_ssh_key {
-        username       = "azureuser"
-        public_key     = tls_private_key.example_ssh.public_key_openssh 
-    }
+    admin_password = random_password.password.result
+    disable_password_authentication = false
+    custom_data    = base64encode(data.template_file.nginx-vm-cloud-init.rendered)
+    # admin_ssh_key {
+    #     username       = "azureuser"
+    #     public_key     = tls_private_key.example_ssh.public_key_openssh 
+    # }
 
     boot_diagnostics {
         storage_account_uri = azurerm_storage_account.sa.primary_blob_endpoint

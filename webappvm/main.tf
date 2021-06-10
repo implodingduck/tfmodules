@@ -110,9 +110,10 @@ resource "azurerm_lb" "lb" {
 }
 
 resource "azurerm_lb_nat_rule" "rule" {
+  count                          = var.num_vms
   resource_group_name            = azurerm_resource_group.rg.name
   loadbalancer_id                = azurerm_lb.lb.id
-  name                           = "http"
+  name                           = "http-${count.index}"
   protocol                       = "Tcp"
   frontend_port                  = 80
   backend_port                   = 80
@@ -136,7 +137,7 @@ resource "azurerm_network_interface_nat_rule_association" "assoc" {
   count = var.num_vms
   network_interface_id  = azurerm_network_interface.nic[count.index].id
   ip_configuration_name = "myipconfig"
-  nat_rule_id           = azurerm_lb_nat_rule.rule.id
+  nat_rule_id           = azurerm_lb_nat_rule.rule[count.index].id
 }
 
 data "template_file" "nginx-vm-cloud-init" {

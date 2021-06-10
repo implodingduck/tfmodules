@@ -54,20 +54,6 @@ resource "azurerm_subnet" "vm" {
 
 }
 
-resource "azurerm_network_interface" "nic" {
-  count = var.num_vms
-  name                = "${var.name}-${count.index}-nic"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-
-  ip_configuration {
-    name                          = "myipconfig"
-    subnet_id                     = azurerm_subnet.vm.id
-    private_ip_address_allocation = "Dynamic"
-  }
-}
-
-
 resource "azurerm_key_vault" "kv" {
   name                        = "kv-webapp-${var.name}"
   location                    = azurerm_resource_group.rg.location
@@ -93,10 +79,6 @@ resource "azurerm_key_vault" "kv" {
   }
 }
 
-data "template_file" "nginx-vm-cloud-init" {
-  template = file("${path.module}/install-nginx.sh")
-}
-
 resource "random_password" "password" {
   length           = 16
   special          = true
@@ -107,6 +89,58 @@ resource "azurerm_key_vault_secret" "vmpassword" {
   name         = "vmpassword"
   value        = random_password.password.result
   key_vault_id = azurerm_key_vault.kv.id
+}
+
+resource "azurerm_public_ip" "pip" {
+  name                = "pipfor${var.name}"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  allocation_method   = "Static"
+}
+
+resource "azurerm_lb" "lb" {
+  name                = "lb${var.name}"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+
+  frontend_ip_configuration {
+    name                 = "PublicIPAddress"
+    public_ip_address_id = azurerm_public_ip.pip.id
+  }
+}
+
+resource "azurerm_lb_nat_rule" "rule" {
+  resource_group_name            = azurerm_resource_group.rg.name
+  loadbalancer_id                = azurerm_lb.lb.id
+  name                           = "http"
+  protocol                       = "Tcp"
+  frontend_port                  = 80
+  backend_port                   = 80
+  frontend_ip_configuration_name = "PublicIPAddress"
+}
+
+resource "azurerm_network_interface" "nic" {
+  count = var.num_vms
+  name                = "${var.name}-${count.index}-nic"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+
+  ip_configuration {
+    name                          = "myipconfig"
+    subnet_id                     = azurerm_subnet.vm.id
+    private_ip_address_allocation = "Dynamic"
+  }
+}
+
+resource "azurerm_network_interface_nat_rule_association" "assoc" {
+  count = var.num_vms
+  network_interface_id  = azurerm_network_interface.nic[count.index].id
+  ip_configuration_name = "myipconfig"
+  nat_rule_id           = azurerm_lb_nat_rule.rule.id
+}
+
+data "template_file" "nginx-vm-cloud-init" {
+  template = file("${path.module}/install-nginx.sh")
 }
 
 resource "azurerm_linux_virtual_machine" "vm" {

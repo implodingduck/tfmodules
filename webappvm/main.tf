@@ -172,6 +172,16 @@ resource "azurerm_network_interface_nat_rule_association" "assoc" {
   nat_rule_id           = azurerm_lb_nat_rule.rule[count.index].id
 }
 
+resource "azurerm_availability_set" "set" {
+  name                = "aset-${var.name}"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+
+  tags = {
+        managed_by = "terraform"
+    }
+}
+
 data "template_file" "nginx-vm-cloud-init" {
   template = file("${path.module}/install-nginx.sh")
 }
@@ -183,7 +193,7 @@ resource "azurerm_linux_virtual_machine" "vm" {
     resource_group_name   = azurerm_resource_group.rg.name
     network_interface_ids = [azurerm_network_interface.nic[count.index].id]
     size                  = var.vm_size
-
+    availability_set_id   = azurerm_availability_set.set.id
     os_disk {
         name              = "${var.name}vm${count.index}osdesk"
         caching           = "ReadWrite"

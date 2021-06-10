@@ -130,7 +130,7 @@ resource "azurerm_lb_probe" "azlb" {
   name                = "probe-${var.name}-${count.index}"
   resource_group_name = azurerm_resource_group.rg.name
   loadbalancer_id     = azurerm_lb.lb.id
-  protocol            = 80
+  protocol            = "Http"
   port                = 80
   interval_in_seconds = 30
   number_of_probes    = 3

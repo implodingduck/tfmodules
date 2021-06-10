@@ -158,13 +158,13 @@ resource "azurerm_network_interface" "nic" {
   name                = "${var.name}-${count.index}-nic"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-
+  enable_ip_forwarding = true
   ip_configuration {
     name                          = "myipconfig${count.index}"
     subnet_id                     = azurerm_subnet.vm.id
     private_ip_address_allocation = "Dynamic"
     #load_balancer_backend_address_pools_ids = [azurerm_lb_backend_address_pool.azlb.id]
-    load_balancer_inbound_nat_rules_ids = [azurerm_lb_nat_rule.rule[count.index].id]
+    #load_balancer_inbound_nat_rules_ids = [azurerm_lb_nat_rule.rule[count.index].id]
   }
 }
 

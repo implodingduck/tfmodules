@@ -98,134 +98,232 @@ resource "azurerm_public_ip" "pip" {
   allocation_method   = "Static"
 }
 
-resource "azurerm_lb" "lb" {
-  name                = "lb${var.name}"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
+# resource "azurerm_lb" "lb" {
+#   name                = "lb${var.name}"
+#   location            = azurerm_resource_group.rg.location
+#   resource_group_name = azurerm_resource_group.rg.name
 
-  frontend_ip_configuration {
-    name                 = "PublicIPAddress"
-    public_ip_address_id = azurerm_public_ip.pip.id
-  }
-}
+#   frontend_ip_configuration {
+#     name                 = "PublicIPAddress"
+#     public_ip_address_id = azurerm_public_ip.pip.id
+#   }
+# }
 
-resource "azurerm_lb_backend_address_pool" "azlb" {
-  name                = "BackEndAddressPool"
-  resource_group_name = azurerm_resource_group.rg.name
-  loadbalancer_id     = azurerm_lb.lb.id
-}
+# resource "azurerm_lb_backend_address_pool" "azlb" {
+#   name                = "BackEndAddressPool"
+#   resource_group_name = azurerm_resource_group.rg.name
+#   loadbalancer_id     = azurerm_lb.lb.id
+# }
 
-resource "azurerm_lb_nat_rule" "rule" {
-  count                          = var.num_vms
-  resource_group_name            = azurerm_resource_group.rg.name
-  loadbalancer_id                = azurerm_lb.lb.id
-  name                           = "http-${count.index}"
-  protocol                       = "Tcp"
-  frontend_port                  = "808${count.index}"
-  backend_port                   = 80
-  frontend_ip_configuration_name = "PublicIPAddress"
-}
+# resource "azurerm_lb_nat_rule" "rule" {
+#   count                          = var.num_vms
+#   resource_group_name            = azurerm_resource_group.rg.name
+#   loadbalancer_id                = azurerm_lb.lb.id
+#   name                           = "http-${count.index}"
+#   protocol                       = "Tcp"
+#   frontend_port                  = "808${count.index}"
+#   backend_port                   = 80
+#   frontend_ip_configuration_name = "PublicIPAddress"
+# }
 
-resource "azurerm_lb_probe" "azlb" {
-  count               = var.num_vms
-  name                = "probe-${var.name}-${count.index}"
-  resource_group_name = azurerm_resource_group.rg.name
-  loadbalancer_id     = azurerm_lb.lb.id
-  protocol            = "Http"
-  port                = 80
-  interval_in_seconds = 30
-  number_of_probes    = 3
-  request_path        = "/"
-}
+# resource "azurerm_lb_probe" "azlb" {
+#   count               = var.num_vms
+#   name                = "probe-${var.name}-${count.index}"
+#   resource_group_name = azurerm_resource_group.rg.name
+#   loadbalancer_id     = azurerm_lb.lb.id
+#   protocol            = "Http"
+#   port                = 80
+#   interval_in_seconds = 30
+#   number_of_probes    = 3
+#   request_path        = "/"
+# }
 
-resource "azurerm_lb_rule" "azlb" {
-  count                          = var.num_vms
-  name                           = "lb-rule-${var.name}-${count.index}"
-  resource_group_name            = azurerm_resource_group.rg.name
-  loadbalancer_id                = azurerm_lb.lb.id
-  protocol                       = "tcp"
-  frontend_port                  = "808${count.index}"
-  backend_port                   = 80
-  frontend_ip_configuration_name = "PublicIPAddress"
-  enable_floating_ip             = false
-  backend_address_pool_id        = azurerm_lb_backend_address_pool.azlb.id
-  idle_timeout_in_minutes        = 5
-  probe_id                       = azurerm_lb_probe.azlb[count.index].id
-}
+# resource "azurerm_lb_rule" "azlb" {
+#   count                          = var.num_vms
+#   name                           = "lb-rule-${var.name}-${count.index}"
+#   resource_group_name            = azurerm_resource_group.rg.name
+#   loadbalancer_id                = azurerm_lb.lb.id
+#   protocol                       = "tcp"
+#   frontend_port                  = "808${count.index}"
+#   backend_port                   = 80
+#   frontend_ip_configuration_name = "PublicIPAddress"
+#   enable_floating_ip             = false
+#   backend_address_pool_id        = azurerm_lb_backend_address_pool.azlb.id
+#   idle_timeout_in_minutes        = 5
+#   probe_id                       = azurerm_lb_probe.azlb[count.index].id
+# }
 
-resource "azurerm_network_interface" "nic" {
-  count = var.num_vms
-  name                = "${var.name}-${count.index}-nic"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-  enable_ip_forwarding = true
-  ip_configuration {
-    name                          = "myipconfig${count.index}"
-    subnet_id                     = azurerm_subnet.vm.id
-    private_ip_address_allocation = "Dynamic"
-    #load_balancer_backend_address_pools_ids = [azurerm_lb_backend_address_pool.azlb.id]
-    #load_balancer_inbound_nat_rules_ids = [azurerm_lb_nat_rule.rule[count.index].id]
-  }
-}
+# resource "azurerm_network_interface" "nic" {
+#   count = var.num_vms
+#   name                = "${var.name}-${count.index}-nic"
+#   location            = azurerm_resource_group.rg.location
+#   resource_group_name = azurerm_resource_group.rg.name
+#   enable_ip_forwarding = true
+#   ip_configuration {
+#     name                          = "myipconfig${count.index}"
+#     subnet_id                     = azurerm_subnet.vm.id
+#     private_ip_address_allocation = "Dynamic"
+#     #load_balancer_backend_address_pools_ids = [azurerm_lb_backend_address_pool.azlb.id]
+#     #load_balancer_inbound_nat_rules_ids = [azurerm_lb_nat_rule.rule[count.index].id]
+#   }
+# }
 
-resource "azurerm_network_interface_nat_rule_association" "assoc" {
-  count = var.num_vms
-  network_interface_id  = azurerm_network_interface.nic[count.index].id
-  ip_configuration_name = "myipconfig${count.index}"
-  nat_rule_id           = azurerm_lb_nat_rule.rule[count.index].id
-}
+# resource "azurerm_network_interface_nat_rule_association" "assoc" {
+#   count = var.num_vms
+#   network_interface_id  = azurerm_network_interface.nic[count.index].id
+#   ip_configuration_name = "myipconfig${count.index}"
+#   nat_rule_id           = azurerm_lb_nat_rule.rule[count.index].id
+# }
 
-resource "azurerm_availability_set" "set" {
-  name                = "aset-${var.name}"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-  managed             = true
-  tags = {
-        managed_by = "terraform"
-    }
-}
+# resource "azurerm_availability_set" "set" {
+#   name                = "aset-${var.name}"
+#   location            = azurerm_resource_group.rg.location
+#   resource_group_name = azurerm_resource_group.rg.name
+#   managed             = true
+#   tags = {
+#         managed_by = "terraform"
+#     }
+# }
 
 data "template_file" "nginx-vm-cloud-init" {
   template = file("${path.module}/install-nginx.sh")
 }
 
-resource "azurerm_linux_virtual_machine" "vm" {
-    count                 = var.num_vms
-    name                  = "${var.name}-vm-${count.index}"
-    location              = azurerm_resource_group.rg.location
-    resource_group_name   = azurerm_resource_group.rg.name
-    network_interface_ids = [azurerm_network_interface.nic[count.index].id]
-    size                  = var.vm_size
-    availability_set_id   = azurerm_availability_set.set.id
-    os_disk {
-        name              = "${var.name}vm${count.index}osdesk"
-        caching           = "ReadWrite"
-        storage_account_type = "Premium_LRS"
-    }
+# resource "azurerm_linux_virtual_machine" "vm" {
+#     count                 = var.num_vms
+#     name                  = "${var.name}-vm-${count.index}"
+#     location              = azurerm_resource_group.rg.location
+#     resource_group_name   = azurerm_resource_group.rg.name
+#     network_interface_ids = [azurerm_network_interface.nic[count.index].id]
+#     size                  = var.vm_size
+#     availability_set_id   = azurerm_availability_set.set.id
+#     os_disk {
+#         name              = "${var.name}vm${count.index}osdesk"
+#         caching           = "ReadWrite"
+#         storage_account_type = "Premium_LRS"
+#     }
 
-    source_image_reference {
-        publisher = "Canonical"
-        offer     = "0001-com-ubuntu-server-focal"
-        sku       = "20_04-lts-gen2"
-        version   = "latest"
-    }
+#     source_image_reference {
+#         publisher = "Canonical"
+#         offer     = "0001-com-ubuntu-server-focal"
+#         sku       = "20_04-lts-gen2"
+#         version   = "latest"
+#     }
 
-    computer_name  = "${var.name}-vm-${count.index}"
-    admin_username = "azureuser"
-    admin_password = random_password.password.result
-    disable_password_authentication = false
-    custom_data    = base64encode(data.template_file.nginx-vm-cloud-init.rendered)
-    # admin_ssh_key {
-    #     username       = "azureuser"
-    #     public_key     = tls_private_key.example_ssh.public_key_openssh 
-    # }
+#     computer_name  = "${var.name}-vm-${count.index}"
+#     admin_username = "azureuser"
+#     admin_password = random_password.password.result
+#     disable_password_authentication = false
+#     custom_data    = base64encode(data.template_file.nginx-vm-cloud-init.rendered)
+#     # admin_ssh_key {
+#     #     username       = "azureuser"
+#     #     public_key     = tls_private_key.example_ssh.public_key_openssh 
+#     # }
 
-    boot_diagnostics {
-        storage_account_uri = azurerm_storage_account.sa.primary_blob_endpoint
-    }
+#     boot_diagnostics {
+#         storage_account_uri = azurerm_storage_account.sa.primary_blob_endpoint
+#     }
 
-    tags = {
-        managed_by = "terraform"
-    }
+#     tags = {
+#         managed_by = "terraform"
+#     }
+# }
+
+
+
+resource "azurerm_lb" "vmss" {
+ name                = "vmss-lb"
+ location            = azurerm_resource_group.rg.location
+ resource_group_name = azurerm_resource_group.rg.name
+
+ frontend_ip_configuration {
+   name                 = "PublicIPAddress"
+   public_ip_address_id = azurerm_public_ip.vmss.id
+ }
+
+ tags = merge({managed_by = "terraform"}, var.tags)
 }
 
+resource "azurerm_lb_backend_address_pool" "bpepool" {
+ resource_group_name = azurerm_resource_group.rg.name
+ loadbalancer_id     = azurerm_lb.vmss.id
+ name                = "BackEndAddressPool"
+}
+
+resource "azurerm_lb_probe" "vmss" {
+ resource_group_name = azurerm_resource_group.rg.name
+ loadbalancer_id     = azurerm_lb.vmss.id
+ name                = "ssh-running-probe"
+ port                = 80
+}
+
+resource "azurerm_lb_rule" "lbnatrule" {
+   resource_group_name            = azurerm_resource_group.rg.name
+   loadbalancer_id                = azurerm_lb.vmss.id
+   name                           = "http"
+   protocol                       = "Tcp"
+   frontend_port                  = 80
+   backend_port                   = 80
+   backend_address_pool_id        = azurerm_lb_backend_address_pool.bpepool.id
+   frontend_ip_configuration_name = "PublicIPAddress"
+   probe_id                       = azurerm_lb_probe.vmss.id
+}
+
+resource "azurerm_virtual_machine_scale_set" "vmss" {
+ name                = "vmscaleset"
+ location            = azurerm_resource_group.rg.location
+ resource_group_name = azurerm_resource_group.rg.name
+ upgrade_policy_mode = "Manual"
+
+ sku {
+   name     = var.vm_size
+   tier     = "Standard"
+   capacity = var.num_vms
+ }
+
+ storage_profile_image_reference {
+   publisher = "Canonical"
+   offer     = "0001-com-ubuntu-server-focal"
+   sku       = "20_04-lts-gen2"
+   version   = "latest"
+ }
+
+ storage_profile_os_disk {
+   name              = ""
+   caching           = "ReadWrite"
+   create_option     = "FromImage"
+   managed_disk_type = "Standard_LRS"
+ }
+
+ storage_profile_data_disk {
+   lun          = 0
+   caching        = "ReadWrite"
+   create_option  = "Empty"
+   disk_size_gb   = 10
+ }
+
+ os_profile {
+   computer_name_prefix = "${var.name}-vm"
+   admin_username = "azureuser"
+   admin_password = random_password.password.result
+   custom_data    = base64encode(data.template_file.nginx-vm-cloud-init.rendered)
+ }
+
+ os_profile_linux_config {
+   disable_password_authentication = false
+ }
+
+ network_profile {
+   name    = "terraformnetworkprofile"
+   primary = true
+
+   ip_configuration {
+     name                                   = "IPConfiguration"
+     subnet_id                              = azurerm_subnet.vm.id
+     load_balancer_backend_address_pool_ids = [azurerm_lb_backend_address_pool.bpepool.id]
+     primary = true
+   }
+ }
+
+ tags = merge({managed_by = "terraform"}, var.tags)
+}

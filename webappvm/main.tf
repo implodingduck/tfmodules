@@ -11,7 +11,7 @@ resource "random_string" "unique" {
 }
 
 resource "azurerm_resource_group" "rg" {
-    name = "rg-webapp-${var.name}-${local.loc_for_naming}"
+    name = "rg-${var.name}-webapp-${local.loc_for_naming}"
     location = var.location
 }
 
@@ -55,7 +55,7 @@ resource "azurerm_subnet" "vm" {
 }
 
 resource "azurerm_key_vault" "kv" {
-  name                        = "kv-webapp-${var.name}"
+  name                        = "${var.name}-kv"
   location                    = azurerm_resource_group.rg.location
   resource_group_name         = azurerm_resource_group.rg.name
   enabled_for_disk_encryption = true
@@ -271,7 +271,7 @@ resource "azurerm_lb_rule" "lbnatrule" {
 }
 
 resource "azurerm_virtual_machine_scale_set" "vmss" {
- name                = "vmscaleset"
+ name                = "${var.name}-scaleset"
  location            = azurerm_resource_group.rg.location
  resource_group_name = azurerm_resource_group.rg.name
  upgrade_policy_mode = "Manual"

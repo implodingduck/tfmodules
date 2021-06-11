@@ -91,6 +91,8 @@ resource "azurerm_key_vault_secret" "vmpassword" {
   key_vault_id = azurerm_key_vault.kv.id
 }
 
+
+
 resource "azurerm_public_ip" "pip" {
   name                = "pipfor${var.name}"
   location            = azurerm_resource_group.rg.location
@@ -232,7 +234,7 @@ data "template_file" "nginx-vm-cloud-init" {
 
 
 resource "azurerm_lb" "vmss" {
- name                = "vmss-lb"
+ name                = "${var.name}-lb"
  location            = azurerm_resource_group.rg.location
  resource_group_name = azurerm_resource_group.rg.name
 
@@ -245,7 +247,6 @@ resource "azurerm_lb" "vmss" {
 }
 
 resource "azurerm_lb_backend_address_pool" "bpepool" {
- resource_group_name = azurerm_resource_group.rg.name
  loadbalancer_id     = azurerm_lb.vmss.id
  name                = "BackEndAddressPool"
 }
@@ -253,7 +254,7 @@ resource "azurerm_lb_backend_address_pool" "bpepool" {
 resource "azurerm_lb_probe" "vmss" {
  resource_group_name = azurerm_resource_group.rg.name
  loadbalancer_id     = azurerm_lb.vmss.id
- name                = "ssh-running-probe"
+ name                = "http-running-probe"
  port                = 80
 }
 
@@ -323,6 +324,9 @@ resource "azurerm_virtual_machine_scale_set" "vmss" {
      load_balancer_backend_address_pool_ids = [azurerm_lb_backend_address_pool.bpepool.id]
      primary = true
    }
+ }
+ boot_diagnostics {
+  storage_account_uri = azurerm_storage_account.sa.primary_blob_endpoint
  }
 
  tags = merge({managed_by = "terraform"}, var.tags)

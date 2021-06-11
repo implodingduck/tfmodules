@@ -326,7 +326,7 @@ resource "azurerm_virtual_machine_scale_set" "vmss" {
    }
  }
  boot_diagnostics {
-  storage_account_uri = azurerm_storage_account.sa.primary_blob_endpoint
+  storage_uri = azurerm_storage_account.sa.primary_blob_endpoint
  }
 
  tags = merge({managed_by = "terraform"}, var.tags)

@@ -1,4 +1,5 @@
 locals {
+  merged_tags    = merge({ managed_by = "terraform" }, var.tags)
   loc_for_naming = lower(replace(var.location, " ", ""))
 }
 
@@ -11,18 +12,18 @@ resource "random_string" "unique" {
 }
 
 resource "azurerm_resource_group" "rg" {
-    name = "rg-${var.name}-webapp-${local.loc_for_naming}"
+    name = "rg-${var.name}-webapp-${var.env}-${local.loc_for_naming}"
     location = var.location
-    tags = merge({ managed_by = "terraform" }, var.tags)
+    tags = local.merged_tags
 }
 
 resource "azurerm_storage_account" "sa" {
-    name                        = "vmdiag${random_string.unique.result}"
+    name                        = "vmdiag${random_string.unique.result}${var.env}"
     resource_group_name         = azurerm_resource_group.rg.name
     location                    = azurerm_resource_group.rg.location
     account_replication_type    = "LRS"
     account_tier                = "Standard"
-    tags                        = merge({ managed_by = "terraform" }, var.tags)
+    tags                        = local.merged_tags
 }
 
 resource "azurerm_virtual_network" "default" {
@@ -31,9 +32,7 @@ resource "azurerm_virtual_network" "default" {
   resource_group_name = azurerm_resource_group.rg.name
   address_space       = [var.vnet_cidr]
   dns_servers         = []
-  tags = {
-    managed_by = "terraform"
-  }
+  tags                = local.merged_tags
 }
 
 resource "azurerm_subnet" "default" {
@@ -54,7 +53,7 @@ resource "azurerm_subnet" "vm" {
 }
 
 resource "azurerm_key_vault" "kv" {
-  name                        = "${var.name}-kv"
+  name                        = "${var.name}-${var.env}-kv"
   location                    = azurerm_resource_group.rg.location
   resource_group_name         = azurerm_resource_group.rg.name
   enabled_for_disk_encryption = true
@@ -79,7 +78,7 @@ resource "azurerm_key_vault" "kv" {
     key_permissions = []
     storage_permissions = []
   }
-  tags = merge({managed_by = "terraform"}, var.tags)
+  tags = local.merged_tags
 }
 
 resource "random_password" "password" {
@@ -92,7 +91,7 @@ resource "azurerm_key_vault_secret" "vmpassword" {
   name         = "vmpassword"
   value        = random_password.password.result
   key_vault_id = azurerm_key_vault.kv.id
-  tags         = merge({managed_by = "terraform"}, var.tags)
+  tags         = local.merged_tags
 }
 
 
@@ -104,7 +103,7 @@ resource "azurerm_public_ip" "pip" {
   allocation_method   = "Static"
   zones               = []
   ip_tags             = {}
-  tags                = merge({managed_by = "terraform"}, var.tags)
+  tags                = local.merged_tags
 }
 
 data "template_file" "nginx-vm-cloud-init" {
@@ -123,7 +122,7 @@ resource "azurerm_lb" "vmss" {
    zones                      = []
  }
 
- tags = merge({managed_by = "terraform"}, var.tags)
+ tags = local.merged_tags
 }
 
 resource "azurerm_lb_backend_address_pool" "bpepool" {
@@ -211,5 +210,5 @@ resource "azurerm_virtual_machine_scale_set" "vmss" {
   storage_uri = azurerm_storage_account.sa.primary_blob_endpoint
  }
 
- tags = merge({managed_by = "terraform"}, var.tags)
+ tags = local.merged_tags
 }

@@ -34,3 +34,8 @@ variable "tags" {
     type = map
     default = {}
 }
+
+variable "env" {
+    type = string 
+    default = "sbx"
+}

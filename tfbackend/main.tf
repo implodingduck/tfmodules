@@ -11,12 +11,12 @@ resource "random_string" "unique" {
 }
 
 resource "azurerm_resource_group" "rg" {
-  name     = "rg-tf-be-${var.name}"
+  name     = "rg-tf-be-${var.name}-${var.env}"
   location = var.location
 }
 
 resource "azurerm_storage_account" "sa" {
-  name                     = "${local.sa_name}${random_string.unique.result}"
+  name                     = "${local.sa_name}${random_string.unique.result}${var.env}"
   resource_group_name      = azurerm_resource_group.rg.name
   location                 = azurerm_resource_group.rg.location
   account_kind             = "StorageV2"
@@ -31,7 +31,7 @@ resource "azurerm_storage_container" "state" {
 }
 
 resource "azurerm_key_vault" "kv" {
-  name                        = "kv-${var.name}"
+  name                        = "kv-${var.name}-${var.env}"
   location                    = azurerm_resource_group.rg.location
   resource_group_name         = azurerm_resource_group.rg.name
   enabled_for_disk_encryption = true

@@ -185,7 +185,7 @@ resource "azurerm_virtual_machine_scale_set" "vmss" {
  }
 
  os_profile {
-   computer_name_prefix = "${var.name}-vm"
+   computer_name_prefix = "${var.name}-${var.env}-vm-"
    admin_username = "azureuser"
    admin_password = random_password.password.result
    custom_data    = base64encode(data.template_file.nginx-vm-cloud-init.rendered)

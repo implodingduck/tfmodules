@@ -1,5 +1,5 @@
 locals {
-  sa_name = substr(replace(replace(replace(var.name, "_", ""), "-", ""), " ", ""), 0, 16)
+  sa_name = substr(replace(replace(replace(var.name, "_", ""), "-", ""), " ", ""), 0, 12)
 }
 
 data "azurerm_client_config" "current" {}

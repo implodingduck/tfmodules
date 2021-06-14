@@ -1,6 +1,7 @@
 locals {
   merged_tags    = merge({ managed_by = "terraform" }, var.tags)
   loc_for_naming = lower(replace(var.location, " ", ""))
+  short_name = substr(replace(replace(replace(var.name, "_", ""), "-", ""), " ", ""), 0, 10)
 }
 
 data "azurerm_client_config" "current" {}
@@ -10,6 +11,13 @@ resource "random_string" "unique" {
   special = false
   upper   = false
 }
+
+resource "random_string" "unique_short" {
+  length  = 4
+  special = false
+  upper   = false
+}
+
 
 resource "azurerm_resource_group" "rg" {
     name = "rg-${var.name}-webapp-${var.env}-${local.loc_for_naming}"
@@ -53,7 +61,7 @@ resource "azurerm_subnet" "vm" {
 }
 
 resource "azurerm_key_vault" "kv" {
-  name                        = "${var.name}-${var.env}-kv"
+  name                        = "${local.short_name}-${var.env}-${random_string.unique_short.result}-kv"
   location                    = azurerm_resource_group.rg.location
   resource_group_name         = azurerm_resource_group.rg.name
   enabled_for_disk_encryption = true

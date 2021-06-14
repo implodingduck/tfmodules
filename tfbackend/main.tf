@@ -1,11 +1,18 @@
 locals {
   sa_name = substr(replace(replace(replace(var.name, "_", ""), "-", ""), " ", ""), 0, 12)
+  kv_name = "kv-${substr(replace(replace(replace(var.name, "_", ""), "-", ""), " ", ""), 0, 10)}-${var.env}"
 }
 
 data "azurerm_client_config" "current" {}
 
 resource "random_string" "unique" {
   length  = 8
+  special = false
+  upper   = false
+}
+
+resource "random_string" "unique_short" {
+  length  = 4
   special = false
   upper   = false
 }
@@ -31,7 +38,7 @@ resource "azurerm_storage_container" "state" {
 }
 
 resource "azurerm_key_vault" "kv" {
-  name                        = "kv-${var.name}-${var.env}"
+  name                        = "${local.kv_name}-${random_string.unique_short.result}"
   location                    = azurerm_resource_group.rg.location
   resource_group_name         = azurerm_resource_group.rg.name
   enabled_for_disk_encryption = true

@@ -3,6 +3,7 @@ locals {
   loc_for_naming = lower(replace(var.resource_group_location, " ", ""))
 }
 
+data "azurerm_client_config" "current" {}
 
 resource "azurerm_mssql_server" "db" {
   name                         = "${var.name}-server"
@@ -72,7 +73,7 @@ resource "azurerm_template_deployment" "sql_connection" {
                 "displayName": "${var.name}-sql-connection",
                 "customParameterValues": {},
                 "api": {
-                    "id": "[concat('/subscriptions/${var.subscription_id}/providers/Microsoft.Web/locations/eastus/managedApis/', parameters('connections_sql_name'))]"
+                    "id": "[concat('/subscriptions/${data.azurerm_client_config.current.subscription_id}/providers/Microsoft.Web/locations/eastus/managedApis/', parameters('connections_sql_name'))]"
                 },
                 "parameterValues": {
                   "server": "${azurerm_mssql_server.db.name}.database.windows.net",

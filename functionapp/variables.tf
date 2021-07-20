@@ -15,7 +15,7 @@ variable "app_settings" {
 }
 
 variable "app_identity" {
-  default = {}
+  default = []
 }
 
 variable "use_32_bit_worker_process" {

@@ -15,10 +15,6 @@ variable "app_settings" {
 }
 
 variable "app_identity" {
-  type = object({
-    type = string
-    identity_ids = list(string)
-  })
   default = {}
 }
 

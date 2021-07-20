@@ -48,8 +48,8 @@ resource "azurerm_function_app" "func" {
   dynamic "identity" {
     for_each = var.app_identity
     content {
-      type = app_identity.value["type"]
-      identity_ids = app_identity.value["identity_ids"]
+      type = identity.value["type"]
+      identity_ids = identity.value["identity_ids"]
     }
   }
   

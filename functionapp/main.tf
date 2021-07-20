@@ -45,7 +45,13 @@ resource "azurerm_function_app" "func" {
     ftps_state = var.ftps_state
   }
   
-  identity = var.app_identity
+  dynamic "identity" {
+    for_each = var.app_identity
+    content {
+      type = app_identity.value["type"]
+      identity_ids = app_identity.value["identity_ids"]
+    }
+  }
   
 }
 

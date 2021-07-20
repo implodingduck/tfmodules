@@ -15,7 +15,7 @@ variable "app_settings" {
 }
 
 variable "app_identity" {
-  type = map
+  type = object
   default = {}
 }
 

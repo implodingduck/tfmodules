@@ -14,6 +14,11 @@ variable "app_settings" {
   type = map
 }
 
+variable "app_identity" {
+  type = map
+  default = {}
+}
+
 variable "use_32_bit_worker_process" {
   type = bool
   default = false

@@ -45,6 +45,7 @@ resource "azurerm_function_app" "func" {
     ftps_state = var.ftps_state
   }
   
+  identity = var.app_identity
   
 }
 

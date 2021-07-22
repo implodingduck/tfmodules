@@ -127,7 +127,7 @@ resource "azurerm_lb" "vmss" {
    name                       = "PublicIPAddress"
    public_ip_address_id       = azurerm_public_ip.pip.id
    private_ip_address_version = "IPv4"
-   zones                      = []
+   
  }
 
  tags = local.merged_tags

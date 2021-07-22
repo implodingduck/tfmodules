@@ -212,6 +212,10 @@ resource "azurerm_virtual_machine_scale_set" "vmss" {
      subnet_id                              = azurerm_subnet.vm.id
      load_balancer_backend_address_pool_ids = [azurerm_lb_backend_address_pool.bpepool.id]
      primary = true
+     dynamic "public_ip_address" {
+       for_each = var.vm_public_ip
+       name = public_ip_address.value["name"]
+     }
    }
  }
  boot_diagnostics {

@@ -39,3 +39,7 @@ variable "env" {
     type = string 
     default = "sbx"
 }
+
+variable "public_ip_address" {
+  default = []
+}

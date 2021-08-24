@@ -35,9 +35,6 @@ variable "app_settings" {
   default = {}
 }
 
-variable "site_config" {
-  type = map
-}
 
 variable "workspace_id" {
   type = string

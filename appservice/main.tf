@@ -13,7 +13,7 @@ resource "random_string" "unique" {
 }
 
 resource "azurerm_application_insights" "app" {
-  name                = "${var.func_name}-insights"
+  name                = "${local.app_name}-insights"
   location            = var.resource_group_location
   resource_group_name = var.resource_group_name
   application_type    = "other"

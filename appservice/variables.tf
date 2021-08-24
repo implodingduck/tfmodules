@@ -42,3 +42,15 @@ variable "site_config" {
 variable "workspace_id" {
   type = string
 }
+
+variable "sc_always_on" {
+  type = string
+}
+
+variable "sc_linux_fx_version" {
+  type = string
+}
+
+variable "sc_health_check_path" {
+  type = string
+}

@@ -38,7 +38,11 @@ resource "azurerm_app_service" "as" {
  location            = var.resource_group_location
  app_service_plan_id = azurerm_app_service_plan.asp.id
 
- site_config = var.site_config
+ site_config {
+   always_on = var.sc_always_on
+   linux_fx_version = var.sc_linux_fx_version
+   health_check_path = var.sc_health_check_path
+ }
 
  app_settings = merge({"APPINSIGHTS_INSTRUMENTATIONKEY" = "${azurerm_application_insights.app.instrumentation_key}"}, var.app_settings)
 

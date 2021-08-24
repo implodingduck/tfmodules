@@ -40,8 +40,8 @@ resource "azurerm_mssql_firewall_rule" "azureservices" {
 resource "azurerm_mssql_firewall_rule" "editor" {
   name             = "editor"
   server_id        = azurerm_mssql_server.db.id
-  start_ip_address = "167.220.149.227"
-  end_ip_address   = "167.220.149.227"
+  start_ip_address = "131.107.8.93"
+  end_ip_address   = "131.107.8.93"
 }
 
 resource "azurerm_template_deployment" "sql_connection" {

@@ -1,5 +1,5 @@
 # tfmodules
-
+This is just a set of samples of how you can create different resources inside of azure. These modules are not intended for production use.
 ## Sample Usage:
 ```
 module "function" {

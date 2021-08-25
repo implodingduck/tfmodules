@@ -54,5 +54,4 @@ variable "sc_health_check_path" {
 
 variable "storage_account" {
   default = []
-  sensitive = true
 }

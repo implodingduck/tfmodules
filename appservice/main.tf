@@ -46,4 +46,16 @@ resource "azurerm_app_service" "as" {
 
  app_settings = merge({"APPINSIGHTS_INSTRUMENTATIONKEY" = "${azurerm_application_insights.app.instrumentation_key}"}, var.app_settings)
 
+ dynamic "storage_account" {
+   for_each = var.storage_account
+   content {
+      name = storage_account.value["name"]
+      type = storage_account.value["type"]
+      account_name = storage_account.value["account_name"]
+      share_name = storage_account.value["share_name"]
+      access_key = storage_account.value["access_key"]
+      mount_path = storage_account.value["mount_path"]
+  }
+ }
+
 }

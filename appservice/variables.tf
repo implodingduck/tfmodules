@@ -51,3 +51,7 @@ variable "sc_linux_fx_version" {
 variable "sc_health_check_path" {
   type = string
 }
+
+variable "storage_account" {
+  default = []
+}

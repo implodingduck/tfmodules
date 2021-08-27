@@ -57,5 +57,8 @@ resource "azurerm_app_service" "as" {
       mount_path = storage_account.value["mount_path"]
   }
  }
+ identity {
+   type = "SystemAssigned"
+ }
 
 }

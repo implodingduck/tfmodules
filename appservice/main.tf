@@ -44,7 +44,7 @@ resource "azurerm_app_service" "as" {
    health_check_path = var.sc_health_check_path
  }
 
- app_settings = merge({"APPINSIGHTS_INSTRUMENTATIONKEY" = "${azurerm_application_insights.app.instrumentation_key}"}, var.app_settings)
+ app_settings = merge({"APPINSIGHTS_INSTRUMENTATIONKEY" = "${azurerm_application_insights.app.instrumentation_key}", "APPLICATIONINSIGHTS_CONNECTION_STRING" = azurerm_application_insights.app.connection_string}, var.app_settings)
 
  dynamic "storage_account" {
    for_each = var.storage_account

@@ -13,3 +13,7 @@ output "identity_principal_id" {
 output "identity_tenant_id" {
   value = azurerm_app_service.as.identity.0.tenant_id
 }
+
+output "default_site_hostname" {
+  value = azurerm_app_service.as.default_site_hostname
+}

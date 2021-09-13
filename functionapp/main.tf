@@ -52,6 +52,24 @@ resource "azurerm_function_app" "func" {
       identity_ids = identity.value["identity_ids"]
     }
   }
+
+  dynamic "auth_settings" {
+    for_each = var.auth_settings
+    content {
+      enabled = lookup(auth_settings.value, "enabled", false)
+      issuer = lookup(auth_settings.value, "issuer", null)
+      default_provider = lookup(auth_settings.value, "default_provider", null)
+      unauthenticated_client_action  =  lookup(auth_settings.value, "unauthenticated_client_action", "RedirectToLoginPage")
+      dynamic "active_directory" {
+        for_each = auth_settings.value.active_directory
+        content {
+          client_id = active_directory.value.client_id
+          client_secret = active_directory.value.client_secret
+        }
+      }
+
+    }
+  }
   
 }
 

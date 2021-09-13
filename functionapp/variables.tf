@@ -18,6 +18,11 @@ variable "app_identity" {
   default = []
 }
 
+variable "auth_settings" {
+  default = []
+}
+
+
 variable "use_32_bit_worker_process" {
   type = bool
   default = false

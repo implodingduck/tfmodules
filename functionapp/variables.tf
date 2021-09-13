@@ -41,3 +41,7 @@ variable "linux_fx_version" {
 variable "working_dir" {
   type = string
 }
+
+variable "cors" {
+  default = []
+}

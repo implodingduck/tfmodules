@@ -43,6 +43,10 @@ resource "azurerm_function_app" "func" {
     use_32_bit_worker_process = var.use_32_bit_worker_process
     linux_fx_version = var.linux_fx_version
     ftps_state = var.ftps_state
+    cors {
+      allowed_origins = ["*"]
+      support_credentials = true
+    }
   }
   
   dynamic "identity" {

@@ -44,7 +44,7 @@ resource "azurerm_function_app" "func" {
     linux_fx_version = var.linux_fx_version
     ftps_state = var.ftps_state
     cors {
-      allowed_origins = "*"
+      allowed_origins = ["*"]
       support_credentials = true
     }
   }

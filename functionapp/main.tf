@@ -40,6 +40,7 @@ resource "azurerm_function_app" "func" {
   app_settings = merge({"APPINSIGHTS_INSTRUMENTATIONKEY" = "${azurerm_application_insights.app.instrumentation_key}"}, var.app_settings)
 
   site_config {
+    always_on = var.always_on
     use_32_bit_worker_process = var.use_32_bit_worker_process
     linux_fx_version = var.linux_fx_version
     ftps_state = var.ftps_state

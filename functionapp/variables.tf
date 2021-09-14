@@ -60,3 +60,8 @@ variable "asp_kind" {
   type = string
   default = "functionapp"
 }
+
+variable "always_on" {
+  type = bool
+  default = false
+}

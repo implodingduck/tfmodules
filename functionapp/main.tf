@@ -11,7 +11,7 @@ resource "azurerm_app_service_plan" "asp" {
   name                = "asp-${var.func_name}"
   location            = var.resource_group_location
   resource_group_name = var.resource_group_name
-  kind                = "functionapp"
+  kind                = var.asp_kind
   reserved = true
   sku {
     tier = var.plan_tier

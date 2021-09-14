@@ -55,3 +55,8 @@ variable "plan_size" {
   type = string
   default = "Y1"
 }
+
+variable "asp_kind" {
+  type = string
+  default = "functionapp"
+}

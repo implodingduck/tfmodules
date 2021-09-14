@@ -9,3 +9,7 @@ output "identity_principal_id" {
 output "identity_tenant_id" {
   value = azurerm_function_app.func.identity.0.tenant_id
 }
+
+output "function_id" {
+  value = azurerm_function_app.func.id
+}

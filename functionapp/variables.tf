@@ -45,3 +45,13 @@ variable "working_dir" {
 variable "cors" {
   default = []
 }
+
+variable "plan_tier" {
+  type = string
+  default = "Dynamic"
+}
+
+variable "plan_size" {
+  type = string
+  default = "Y1"
+}

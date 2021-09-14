@@ -14,8 +14,8 @@ resource "azurerm_app_service_plan" "asp" {
   kind                = "functionapp"
   reserved = true
   sku {
-    tier = "Dynamic"
-    size = "Y1"
+    tier = var.plan_tier
+    size = var.plan_size
   }
 }
 

@@ -65,3 +65,8 @@ variable "always_on" {
   type = bool
   default = false
 }
+
+variable "publish" {
+  type = number
+  default = 1
+}

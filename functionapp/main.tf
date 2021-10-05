@@ -82,6 +82,7 @@ resource "azurerm_function_app" "func" {
 }
 
 resource "null_resource" "publish_func"{
+  count = var.publish
   depends_on = [
     azurerm_function_app.func
   ]

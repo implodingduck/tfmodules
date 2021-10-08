@@ -47,7 +47,7 @@ resource "azurerm_function_app" "func" {
     dynamic "cors" {
       for_each = var.cors
       content {
-        allowed_origins = lookup(cors.value, "allowed_origins", [])
+        allowed_origins = length(lookup(cors.value, "allowed_origins", [])) > 0 ? concat(lookup(cors.value, "allowed_origins", []), ["${var.func_name}.azurewebsites.net"]) : []
         support_credentials = lookup(cors.value, "support_credentials", false)
       }  
     }

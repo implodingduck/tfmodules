@@ -42,6 +42,13 @@ resource "azurerm_app_service" "as" {
    always_on = var.sc_always_on
    linux_fx_version = var.sc_linux_fx_version
    health_check_path = var.sc_health_check_path
+   dynamic "cors" {
+      for_each = var.cors
+      content {
+        allowed_origins = length(lookup(cors.value, "allowed_origins", [])) > 0 ? concat(lookup(cors.value, "allowed_origins", []), ["${var.func_name}.azurewebsites.net"]) : []
+        support_credentials = lookup(cors.value, "support_credentials", false)
+      }  
+    }
  }
 
  app_settings = merge({"APPINSIGHTS_INSTRUMENTATIONKEY" = "${azurerm_application_insights.app.instrumentation_key}", "APPLICATIONINSIGHTS_CONNECTION_STRING" = azurerm_application_insights.app.connection_string}, var.app_settings)

@@ -81,6 +81,19 @@ resource "azurerm_function_app" "func" {
   
 }
 
+resource "local_file" "localsettings" {
+    content     = <<-EOT
+      {
+        "IsEncrypted": false,
+        "Values": {
+          "FUNCTIONS_WORKER_RUNTIME": "${lookup(var.app_settings, "FUNCTIONS_WORKER_RUNTIME")}",
+          "AzureWebJobsStorage": ""
+        }
+      }
+EOT
+    filename = "${path.module}/${var.working_dir}/local.settings.json"
+}
+
 resource "null_resource" "publish_func"{
   count = var.publish
   depends_on = [

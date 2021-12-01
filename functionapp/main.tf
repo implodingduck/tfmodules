@@ -105,6 +105,6 @@ resource "null_resource" "publish_func"{
   }
   provisioner "local-exec" {
     working_dir = var.working_dir
-    command     = "func azure functionapp publish ${azurerm_function_app.func.name}"
+    command     = "ls && cat local.settings.json && func azure functionapp publish ${azurerm_function_app.func.name}"
   }
 }

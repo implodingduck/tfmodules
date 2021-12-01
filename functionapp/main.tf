@@ -91,7 +91,7 @@ resource "local_file" "localsettings" {
         }
       }
 EOT
-    filename = "${path.module}/${var.working_dir}/local.settings.json"
+    filename = "${var.working_dir}/local.settings.json"
 }
 
 resource "null_resource" "publish_func"{

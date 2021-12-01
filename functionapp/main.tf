@@ -97,7 +97,8 @@ EOT
 resource "null_resource" "publish_func"{
   count = var.publish
   depends_on = [
-    azurerm_function_app.func
+    azurerm_function_app.func,
+    local_file.localsettings
   ]
   triggers = {
     index = "${timestamp()}"

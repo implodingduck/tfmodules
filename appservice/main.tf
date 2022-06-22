@@ -49,6 +49,7 @@ resource "azurerm_app_service" "as" {
         support_credentials = lookup(cors.value, "support_credentials", false)
       }  
     }
+    acr_use_managed_identity_credentials = var.acr_use_managed_identity_credentials
  }
 
  app_settings = merge({"APPINSIGHTS_INSTRUMENTATIONKEY" = "${azurerm_application_insights.app.instrumentation_key}", "APPLICATIONINSIGHTS_CONNECTION_STRING" = azurerm_application_insights.app.connection_string}, var.app_settings)

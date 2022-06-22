@@ -59,3 +59,7 @@ variable "storage_account" {
 variable "cors" {
   default = []
 }
+
+variable "acr_use_managed_identity_credentials" {
+  default = false
+}

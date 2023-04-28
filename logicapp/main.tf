@@ -55,40 +55,40 @@ resource "azurerm_storage_share" "share" {
   quota                = 1
 }
 
-resource "azapi_resource_action" "resource_access_rule" {
-    type = "Microsoft.Storage/storageAccounts@2022-05-01"
-    resource_id            = azurerm_storage_account.sa.id
-    method                 = "PUT"
+# resource "azapi_resource_action" "resource_access_rule" {
+#     type = "Microsoft.Storage/storageAccounts@2022-05-01"
+#     resource_id            = azurerm_storage_account.sa.id
+#     method                 = "PUT"
     
-    body                   = jsonencode({
-        location               = var.resource_group_location
-        properties = {
-            networkAcls = {
-                # resourceAccessRules = [
-                #     {
-                #         resourceId = "${azurerm_resource_group.rg.id}/providers/Microsoft.Logic/workflows/*"
-                #         tenantId = data.azurerm_client_config.current.tenant_id
-                #     }
-                # ]
-                bypass = "AzureServices"
-                virtualNetworkRules = [
-                    {
-                        id = var.subnet_id_logicapp
-                        action = "Allow"
-                    }
+#     body                   = jsonencode({
+#         location               = var.resource_group_location
+#         properties = {
+#             networkAcls = {
+#                 # resourceAccessRules = [
+#                 #     {
+#                 #         resourceId = "${azurerm_resource_group.rg.id}/providers/Microsoft.Logic/workflows/*"
+#                 #         tenantId = data.azurerm_client_config.current.tenant_id
+#                 #     }
+#                 # ]
+#                 bypass = "AzureServices"
+#                 virtualNetworkRules = [
+#                     {
+#                         id = var.subnet_id_logicapp
+#                         action = "Allow"
+#                     }
                     
-                ]
-                ipRules = [
-                    {
-                        action = "Allow"
-                        value = data.http.ip.response_body
-                    }
-                ]
-                defaultAction = "Deny"
-            }
-        }
-    })
-}
+#                 ]
+#                 ipRules = [
+#                     {
+#                         action = "Allow"
+#                         value = data.http.ip.response_body
+#                     }
+#                 ]
+#                 defaultAction = "Deny"
+#             }
+#         }
+#     })
+# }
 
 
 resource "azurerm_service_plan" "asp" {

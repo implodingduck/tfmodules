@@ -17,3 +17,7 @@ variable "subnet_id_logicapp" {
 variable "subnet_id_pe" {
   type = string
 }
+
+variable "tags" {
+  type = object
+}

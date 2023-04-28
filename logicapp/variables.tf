@@ -19,5 +19,5 @@ variable "subnet_id_pe" {
 }
 
 variable "tags" {
-  type = object
+  type = map
 }

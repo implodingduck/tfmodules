@@ -1,3 +1,17 @@
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+    }
+    random = {
+      source  = "hashicorp/random"
+    }
+    azapi = {
+      source  = "azure/azapi"
+    }
+  }
+}
+
 resource "azurerm_storage_account" "sa" {
   name                     = "sa${var.name}"
   resource_group_name      = var.resource_group_name

@@ -12,6 +12,11 @@ terraform {
   }
 }
 
+data "http" "ip" {
+  url = "https://ifconfig.me/ip"
+}
+
+
 resource "azurerm_storage_account" "sa" {
   name                     = "sa${var.name}"
   resource_group_name      = var.resource_group_name
@@ -68,7 +73,7 @@ resource "azapi_resource_action" "resource_access_rule" {
                 bypass = "AzureServices"
                 virtualNetworkRules = [
                     {
-                        id = azurerm_subnet.logicapps.id
+                        id = var.subnet_id_logicapp
                         action = "Allow"
                     }
                     

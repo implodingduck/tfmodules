@@ -20,7 +20,7 @@ resource "azurerm_storage_account" "sa" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  tags = local.tags
+  tags = var.tags
 }
 
 resource "azurerm_storage_container" "hosts" {
@@ -92,7 +92,7 @@ resource "azurerm_service_plan" "asp" {
   location            = var.resource_group_location
   os_type             = "Windows"
   sku_name            = "WS1"
-  tags = local.tags
+  tags = var.tags
 }
 
 
@@ -121,7 +121,7 @@ resource "azurerm_logic_app_standard" "example" {
   identity {
     type = "SystemAssigned"
   }
-  tags = local.tags
+  tags = var.tags
 }
 
 resource "azurerm_role_assignment" "system" {

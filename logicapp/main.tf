@@ -29,27 +29,27 @@ resource "azurerm_storage_account" "sa" {
 }
 
 resource "azurerm_storage_container" "hosts" {
-  depends_on = [
-    azapi_resource_action.resource_access_rule
-  ]
+#   depends_on = [
+#     azapi_resource_action.resource_access_rule
+#   ]
   name                  = "azure-webjobs-hosts"
   storage_account_name  = azurerm_storage_account.sa.name
   container_access_type = "private"
 }
 
 resource "azurerm_storage_container" "secrets" {
-  depends_on = [
-    azapi_resource_action.resource_access_rule
-  ]
+#   depends_on = [
+#     azapi_resource_action.resource_access_rule
+#   ]
   name                  = "azure-webjobs-secrets"
   storage_account_name  = azurerm_storage_account.sa.name
   container_access_type = "private"
 }
 
 resource "azurerm_storage_share" "share" {
-  depends_on = [
-    azapi_resource_action.resource_access_rule
-  ]
+#   depends_on = [
+#     azapi_resource_action.resource_access_rule
+#   ]
   name                 = "la-${var.name}-content"
   storage_account_name = azurerm_storage_account.sa.name
   quota                = 1

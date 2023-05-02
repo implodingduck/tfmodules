@@ -110,6 +110,7 @@ resource "azurerm_logic_app_standard" "example" {
   storage_account_access_key = azurerm_storage_account.sa.primary_access_key
   virtual_network_subnet_id  = var.subnet_id_logicapp
   app_settings = {
+    "FUNCTIONS_EXTENSION_VERSION"     = "~v4"
     "FUNCTIONS_WORKER_RUNTIME"        = "node"
     "WEBSITE_NODE_DEFAULT_VERSION"    = "~14"
     "WEBSITE_CONTENTOVERVNET"         = "1"

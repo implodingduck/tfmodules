@@ -128,6 +128,12 @@ resource "azurerm_logic_app_standard" "example" {
     type = "SystemAssigned"
   }
   tags = var.tags
+
+  lifecycle {
+    ignore_changes = [
+      app_settings
+    ]
+  }
 }
 
 resource "azurerm_role_assignment" "system" {

@@ -4,6 +4,13 @@ resource "azurerm_cosmosdb_account" "db" {
   location            = var.resource_group_location
   offer_type          = "Standard"
   kind                = "GlobalDocumentDB"
+  consistency_policy {
+    consistency_level = "Eventual"
+  }
+  geo_location {
+    location          = var.resource_group_location
+    failover_priority = 0
+  }
 }
 
 resource "azurerm_cosmosdb_sql_database" "sql" {
